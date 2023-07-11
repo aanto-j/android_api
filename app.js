@@ -19,7 +19,6 @@ conn.connect((err) => {
 });
 
 app.get('/', (req,res) => {
-        let roll = req.body.roll
         conn.query("SELECT * FROM student",(err,result,fields)=>{
             if (err) throw err;
             rows = JSON.stringify(result);
@@ -31,23 +30,24 @@ app.get('/', (req,res) => {
 });
 
 app.post("/select", (req,res) => {
-    let roll = req.body.roll
-    conn.query("SELECT * FROM student where rollno = ?",[roll],(err,result,fields)=>{
+    let id = req.body.id
+    conn.query("SELECT * FROM student where id = ?",[id],(err,result,fields)=>{
         if (err) throw err;
             rows = JSON.stringify(result);
             if(rows == null || Object.keys(rows).length == 0){
                 res.status(404).json("Not Found!")
             }
+            console.log(rows);
         res.json(result)
     });
 })
 
 app.post("/update", (req,res) => {
-    let roll = req.body.roll
+    let rollno = req.body.rollno
     let name = req.body.name
     let age = req.body.age
     let dept = req.body.dept
-    conn.query( "UPDATE `student` SET `rollno` = ?, `name` = ?, `age` = ?, `dept` = ? WHERE `student`.`rollno` = ? ",[roll,name,age,dept,roll],
+    conn.query( "UPDATE `student` SET `rollno` = ?, `name` = ?, `age` = ?, `dept` = ? WHERE `student`.`rollno` = ? ",[rollno,name,age,dept,rollno],
     (err,result,fields)=>{
         try{
             if (err) throw err;
@@ -60,16 +60,16 @@ app.post("/update", (req,res) => {
         catch (err){
             res.status(HttpStatus.StatusCodes.NOT_FOUND).send("Error!");
         }
-        // res.render("index",{roll:rows[0].rollno,name:rows[0].name,dept:rows[0].dept,age:rows[0].age});
+        // res.render("index",{rollno:rows[0].rollno,name:rows[0].name,dept:rows[0].dept,age:rows[0].age});
     });
 })
 
 app.post("/insert", (req,res) => {
-    let roll = req.body.roll
+    let rollno = req.body.rollno
     let name = req.body.name
     let age = req.body.age
     let dept = req.body.dept
-    conn.query("INSERT INTO student values(?,?,?,?);",[roll,name,age,dept],(err,result,fields)=>{
+    conn.query("INSERT INTO student values(NULL,?,?,?,?);",[rollno,name,age,dept],(err,result,fields)=>{
         try{
             if (err) throw err;
             rows = JSON.stringify(result);
@@ -81,7 +81,7 @@ app.post("/insert", (req,res) => {
         catch (err){
             res.status(HttpStatus.StatusCodes.NOT_FOUND).send("Error!");
         }
-        // res.render("index",{roll:rows[0].rollno,name:rows[0].name,dept:rows[0].dept,age:rows[0].age});
+        // res.render("index",{rollno:rows[0].rollno,name:rows[0].name,dept:rows[0].dept,age:rows[0].age});
     });
 })
 
